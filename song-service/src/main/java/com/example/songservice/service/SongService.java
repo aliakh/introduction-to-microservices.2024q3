@@ -8,7 +8,6 @@ import com.example.songservice.exception.SongNotFoundException;
 import com.example.songservice.repository.SongRepository;
 import com.example.songservice.service.validation.CsvIdsParser;
 import com.example.songservice.service.validation.CsvIdsValidator;
-import com.example.songservice.service.validation.IdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +20,6 @@ public class SongService {
 
     @Autowired
     private SongRepository songRepository;
-    @Autowired
-    private IdValidator idValidator;
     @Autowired
     private CsvIdsValidator csvIdsValidator;
     @Autowired
@@ -49,8 +46,6 @@ public class SongService {
 
     @Transactional(readOnly = true)
     public SongDto getSongById(Long id) {
-        idValidator.validate(id);
-
         var song = songRepository.findById(id)
             .orElseThrow(() -> new SongNotFoundException(id));
 

@@ -5,6 +5,7 @@ import com.example.songservice.dto.CreateSongResponse;
 import com.example.songservice.dto.DeleteSongsResponse;
 import com.example.songservice.dto.SongDto;
 import com.example.songservice.service.SongService;
+import com.example.songservice.service.validation.ValidId;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class SongController {
     private SongService songService;
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<CreateSongResponse> createSong(@Valid @RequestBody CreateSongRequest createSongRequest) {
+    public ResponseEntity<CreateSongResponse> createSong(@RequestBody @Valid CreateSongRequest createSongRequest) {
         var createdId = songService.createSong(createSongRequest);
         return ResponseEntity.ok(new CreateSongResponse(createdId));
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<SongDto> getSongById(@PathVariable Long id) {
+    public ResponseEntity<SongDto> getSongById(@PathVariable @ValidId Long id) {
         var songDto = songService.getSongById(id);
         return ResponseEntity.ok(songDto);
     }
