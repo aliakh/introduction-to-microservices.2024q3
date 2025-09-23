@@ -3,6 +3,8 @@ package com.example.resourceservice.controller;
 import com.example.resourceservice.dto.DeleteResourcesResponse;
 import com.example.resourceservice.dto.UploadResourceResponse;
 import com.example.resourceservice.service.ResourceService;
+import com.example.resourceservice.validation.ValidCsvIds;
+import com.example.resourceservice.validation.ValidId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,7 +32,7 @@ public class ResourceController {
     }
 
     @GetMapping(value = "/{id}", produces = "audio/mpeg")
-    public ResponseEntity<byte[]> getResource(@PathVariable Long id) {
+    public ResponseEntity<byte[]> getResource(@PathVariable @ValidId Long id) {
         var resource = resourceService.getResource(id);
 
         var headers = new HttpHeaders();
@@ -43,7 +45,7 @@ public class ResourceController {
     }
 
     @DeleteMapping(produces = "application/json")
-    public ResponseEntity<DeleteResourcesResponse> deleteResources(@RequestParam("id") String csvIds) {
+    public ResponseEntity<DeleteResourcesResponse> deleteResources(@RequestParam("id") @ValidCsvIds String csvIds) {
         var deletedIds = resourceService.deleteResources(csvIds);
         return ResponseEntity.ok(new DeleteResourcesResponse(deletedIds));
     }

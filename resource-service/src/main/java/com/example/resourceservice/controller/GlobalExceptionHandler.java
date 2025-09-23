@@ -1,10 +1,10 @@
 package com.example.resourceservice.controller;
 
 import com.example.resourceservice.dto.ErrorResponse;
-import com.example.resourceservice.exception.InvalidIdException;
 import com.example.resourceservice.exception.InvalidMp3FileException;
 import com.example.resourceservice.exception.ResourceNotFoundException;
 import com.example.resourceservice.exception.SongAlreadyExistsException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler(InvalidIdException.class)
-    public ResponseEntity<ErrorResponse> handle(InvalidIdException e) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handle(ConstraintViolationException e) {
         return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 

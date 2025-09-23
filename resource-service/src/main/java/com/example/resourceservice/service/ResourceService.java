@@ -5,14 +5,12 @@ import com.example.resourceservice.exception.InvalidMp3FileException;
 import com.example.resourceservice.exception.ResourceNotFoundException;
 import com.example.resourceservice.exception.SongAlreadyExistsException;
 import com.example.resourceservice.repository.ResourceRepository;
-import com.example.resourceservice.service.validation.CsvIdsParser;
-import com.example.resourceservice.service.validation.CsvIdsValidator;
-import com.example.resourceservice.service.validation.IdValidator;
 import com.example.resourceservice.service.validation.Mp3Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +25,6 @@ public class ResourceService {
     private SongServiceClient songServiceClient;
     @Autowired
     private Mp3Validator mp3Validator;
-    @Autowired
-    private IdValidator idValidator;
-    @Autowired
-    private CsvIdsValidator csvIdsValidator;
-    @Autowired
-    private CsvIdsParser csvIdsParser;
 
     @Transactional
     public Long uploadResource(byte[] audio) {
@@ -60,17 +52,13 @@ public class ResourceService {
 
     @Transactional(readOnly = true)
     public Resource getResource(Long id) {
-        idValidator.validate(id);
-
         return resourceRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     @Transactional
     public List<Long> deleteResources(String csvIds) {
-        csvIdsValidator.validate(csvIds);
-
-        return csvIdsParser.parse(csvIds)
+        return parse(csvIds)
             .stream()
             .filter(resourceRepository::existsById)
             .peek(id -> resourceRepository.deleteById(id))
@@ -79,6 +67,19 @@ public class ResourceService {
                     songServiceClient.deleteSongMetadata(id);
                 } catch (RuntimeException e) {
                     throw new RuntimeException(String.format("Failed to delete song metadata for ID=%d", id));
+                }
+            })
+            .collect(Collectors.toList());
+    }
+
+    private List<Long> parse(String csvIds) {
+        return Arrays.stream(csvIds.split(","))
+            .map(String::trim)
+            .map(id -> {
+                try {
+                    return Long.parseLong(id);
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException(e);
                 }
             })
             .collect(Collectors.toList());
