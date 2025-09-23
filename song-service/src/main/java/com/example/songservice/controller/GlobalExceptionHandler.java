@@ -3,6 +3,7 @@ package com.example.songservice.controller;
 import com.example.songservice.dto.ErrorResponse;
 import com.example.songservice.exception.SongAlreadyExistsException;
 import com.example.songservice.exception.SongNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SongAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handle(SongAlreadyExistsException e) {
         return buildResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handle(ConstraintViolationException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
