@@ -5,11 +5,14 @@ import com.example.resourceservice.exception.InvalidMp3FileException;
 import com.example.resourceservice.exception.ResourceNotFoundException;
 import com.example.resourceservice.exception.SongAlreadyExistsException;
 import com.example.resourceservice.repository.ResourceRepository;
-import com.example.resourceservice.service.validation.Mp3Validator;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +26,10 @@ public class ResourceService {
     private MetadataService metadataService;
     @Autowired
     private SongServiceClient songServiceClient;
-    @Autowired
-    private Mp3Validator mp3Validator;
 
     @Transactional
     public Long uploadResource(byte[] audio) {
-        if (!mp3Validator.valid(audio)) {
+        if (!validMp3(audio)) {
             throw new InvalidMp3FileException("The request body is invalid MP3");
         }
 
@@ -48,6 +49,16 @@ public class ResourceService {
         }
 
         return createdId;
+    }
+
+    private boolean validMp3(byte[] audio) {
+        var tika = new Tika();
+        try (InputStream is = new ByteArrayInputStream(audio)) {
+            var mimeType = tika.detect(is);
+            return "audio/mpeg".equalsIgnoreCase(mimeType);
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Transactional(readOnly = true)
