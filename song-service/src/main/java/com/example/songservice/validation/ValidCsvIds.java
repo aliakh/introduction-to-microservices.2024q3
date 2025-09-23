@@ -1,4 +1,4 @@
-package com.example.songservice.service.validation;
+package com.example.songservice.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -10,12 +10,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = ValidIdValidator.class)
+@Constraint(validatedBy = ValidCsvIdsValidator.class)
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidId {
+public @interface ValidCsvIds {
 
-    String message() default "Invalid value for ID";
+    String message() default "";
 
     Class<?>[] groups() default {};
 

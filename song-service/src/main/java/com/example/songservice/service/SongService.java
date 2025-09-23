@@ -6,12 +6,11 @@ import com.example.songservice.entity.Song;
 import com.example.songservice.exception.SongAlreadyExistsException;
 import com.example.songservice.exception.SongNotFoundException;
 import com.example.songservice.repository.SongRepository;
-import com.example.songservice.service.validation.CsvIdsParser;
-import com.example.songservice.service.validation.CsvIdsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,10 +19,6 @@ public class SongService {
 
     @Autowired
     private SongRepository songRepository;
-    @Autowired
-    private CsvIdsValidator csvIdsValidator;
-    @Autowired
-    private CsvIdsParser csvIdsParser;
 
     @Transactional
     public Long createSong(CreateSongRequest createSongRequest) {
@@ -61,12 +56,23 @@ public class SongService {
 
     @Transactional
     public List<Long> deleteSongs(String csvIds) {
-        csvIdsValidator.validate(csvIds);
-
-        return csvIdsParser.parse(csvIds)
+        return parse(csvIds)
             .stream()
             .filter(songRepository::existsById)
             .peek(songRepository::deleteById)
+            .collect(Collectors.toList());
+    }
+
+    private List<Long> parse(String csvIds) {
+        return Arrays.stream(csvIds.split(","))
+            .map(String::trim)
+            .map(id -> {
+                try {
+                    return Long.parseLong(id);
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException(e);
+                }
+            })
             .collect(Collectors.toList());
     }
 }

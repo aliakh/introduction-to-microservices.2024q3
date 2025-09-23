@@ -1,7 +1,6 @@
 package com.example.songservice.controller;
 
 import com.example.songservice.dto.ErrorResponse;
-import com.example.songservice.exception.InvalidIdException;
 import com.example.songservice.exception.SongAlreadyExistsException;
 import com.example.songservice.exception.SongNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,11 +24,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SongAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handle(SongAlreadyExistsException e) {
         return buildResponse(HttpStatus.CONFLICT, e.getMessage());
-    }
-
-    @ExceptionHandler(InvalidIdException.class)
-    public ResponseEntity<ErrorResponse> handle(InvalidIdException e) {
-        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

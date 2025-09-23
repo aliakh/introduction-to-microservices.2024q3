@@ -5,7 +5,8 @@ import com.example.songservice.dto.CreateSongResponse;
 import com.example.songservice.dto.DeleteSongsResponse;
 import com.example.songservice.dto.SongDto;
 import com.example.songservice.service.SongService;
-import com.example.songservice.service.validation.ValidId;
+import com.example.songservice.validation.ValidCsvIds;
+import com.example.songservice.validation.ValidId;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class SongController {
     }
 
     @DeleteMapping(produces = "application/json")
-    public ResponseEntity<DeleteSongsResponse> deleteSongs(@RequestParam("id") String csvIds) {
+    public ResponseEntity<DeleteSongsResponse> deleteSongs(@RequestParam("id") @ValidCsvIds String csvIds) {
         var deletedIds = songService.deleteSongs(csvIds);
         return ResponseEntity.ok(new DeleteSongsResponse(deletedIds));
     }
