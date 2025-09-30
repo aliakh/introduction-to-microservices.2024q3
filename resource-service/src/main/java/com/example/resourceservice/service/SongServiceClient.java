@@ -2,6 +2,7 @@ package com.example.resourceservice.service;
 
 import com.example.resourceservice.dto.CreateSongDto;
 import com.example.resourceservice.exception.SongAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +15,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class SongServiceClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${song-service.url}")
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value("http://song-service")
     private String songServiceUrl;
 
     public void createSong(CreateSongDto createSongDto) {
