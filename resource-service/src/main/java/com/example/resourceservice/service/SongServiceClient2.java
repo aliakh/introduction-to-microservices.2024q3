@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SongServiceClient2 {
 
     @PostMapping
-    ResponseEntity<Void> createSongMetadata(CreateSongDto createSongDto);
+    ResponseEntity<Void> createSong(CreateSongDto createSongDto);
 
     @DeleteMapping
-    ResponseEntity<Void> deleteSongsMetadata(@RequestParam("id") Long id);
+    ResponseEntity<Void> deleteSong(@RequestParam("id") Long id);
 }
