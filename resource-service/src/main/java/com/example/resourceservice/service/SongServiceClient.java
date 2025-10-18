@@ -1,33 +1,17 @@
 package com.example.resourceservice.service;
 
 import com.example.resourceservice.dto.CreateSongDto;
-import com.example.resourceservice.exception.SongAlreadyExistsException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@Service
-public class SongServiceClient {
+@FeignClient(name = "songServiceClient", path = "${song-service.url}")
+public interface SongServiceClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @PostMapping("/songs")
+    void createSong(CreateSongDto createSongDto);
 
-    @Value("${song-service.url}")
-    private String songServiceUrl;
-
-    public void createSong(CreateSongDto createSongDto) {
-        var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        var requestEntity = new HttpEntity<>(createSongDto, headers);
-        restTemplate.postForEntity(songServiceUrl + "/songs", requestEntity, Void.class);
-    }
-
-    public void deleteSong(Long id) {
-        restTemplate.delete(songServiceUrl + "/songs?id=" + id);
-    }
+    @DeleteMapping("/songs")
+    void deleteSong(@RequestParam("id") Long id);
 }

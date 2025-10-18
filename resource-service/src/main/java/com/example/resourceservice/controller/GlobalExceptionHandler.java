@@ -4,7 +4,6 @@ import com.example.resourceservice.dto.ErrorResponse;
 import com.example.resourceservice.exception.InvalidIdException;
 import com.example.resourceservice.exception.InvalidMp3FileException;
 import com.example.resourceservice.exception.ResourceNotFoundException;
-import com.example.resourceservice.exception.SongAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -18,11 +17,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handle(ResourceNotFoundException e) {
         return buildResponse(HttpStatus.NOT_FOUND, e.getMessage());
-    }
-
-    @ExceptionHandler(SongAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handle(SongAlreadyExistsException e) {
-        return buildResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
     @ExceptionHandler(InvalidMp3FileException.class)

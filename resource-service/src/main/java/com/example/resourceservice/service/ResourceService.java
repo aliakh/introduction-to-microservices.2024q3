@@ -3,7 +3,6 @@ package com.example.resourceservice.service;
 import com.example.resourceservice.entity.Resource;
 import com.example.resourceservice.exception.InvalidMp3FileException;
 import com.example.resourceservice.exception.ResourceNotFoundException;
-import com.example.resourceservice.exception.SongAlreadyExistsException;
 import com.example.resourceservice.repository.ResourceRepository;
 import com.example.resourceservice.service.validation.CsvIdsParser;
 import com.example.resourceservice.service.validation.CsvIdsValidator;
@@ -49,8 +48,6 @@ public class ResourceService {
         try {
             var createSongDto = metadataService.extractSongMetadata(audio, createdId);
             songServiceClient.createSong(createSongDto);
-        } catch (SongAlreadyExistsException e) {
-            throw e;
         } catch (RuntimeException e) {
             throw new RuntimeException(String.format("Failed to save song metadata for ID=%d", createdId));
         }
