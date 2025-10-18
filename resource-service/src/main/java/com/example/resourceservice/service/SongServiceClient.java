@@ -24,16 +24,7 @@ public class SongServiceClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         var requestEntity = new HttpEntity<>(createSongDto, headers);
-
-        try {
-            restTemplate.postForEntity(songServiceUrl + "/songs", requestEntity, Void.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.CONFLICT) {
-                throw new SongAlreadyExistsException(createSongDto.id());
-            } else {
-                throw e;
-            }
-        }
+        restTemplate.postForEntity(songServiceUrl + "/songs", requestEntity, Void.class);
     }
 
     public void deleteSong(Long id) {
